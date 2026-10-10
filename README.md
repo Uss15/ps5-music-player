@@ -8,13 +8,15 @@ An early-stage homebrew music-player project for an exploited PS5. The goal is a
 - Scans `/data/music`, `/mnt/usb0`, and `/mnt/usb1`; USB mount paths can vary by firmware and loader, so verify them on the target console.
 - Case-insensitive sorted playlist output, bounded path and track counts, and symbolic-link skipping.
 - TCP playlist service on port `9023` and a host CLI that reads the complete multi-line response.
+- Responsive English browser UI with PS5 connection fields, search, source labels, and a playlist view.
 - Reserved control commands (`STATUS`, `NEXT`, `PREV`, `PAUSE`, `RESUME`, `STOP`) currently return `audio-backend-not-implemented`. They do not play or control audio yet.
+- The browser UI is hosted by the computer/phone running the Python server. It is not rendered on the PS5 TV screen; a native console UI is still a separate task.
 
 ## Requirements
 
 - [ps5-payload-dev/sdk](https://github.com/ps5-payload-dev/sdk)
 - An ELF loader compatible with the console's homebrew environment
-- Python 3.10+ for the optional host controller
+- Python 3.10+ for the host controller and web UI
 
 Firmware support depends on the SDK, loader, and libraries available in the target environment. This project has not been tested on a physical PS5 in this branch.
 
@@ -33,6 +35,16 @@ python3 host/music_ctl.py --host 192.168.1.50 playlist
 python3 host/music_ctl.py --host 192.168.1.50 status
 ```
 
+Run the English web interface on the same computer as the browser:
+
+```sh
+make run-web
+```
+
+Open `http://127.0.0.1:8765`, enter the PS5's local IP address, and choose **Connect & scan**. To open the page from a phone on the same trusted home network, run `python3 host/music_web.py --listen 0.0.0.0` and browse to `http://<computer-ip>:8765`. The web bridge has no login yet; do not expose it to the public internet or an untrusted network.
+
+The interface currently scans and displays the playlist. Play/pause/skip and volume controls are visibly disabled until the PS5 audio backend exists. This browser page runs on a computer or phone, not on the PS5 TV screen.
+
 Run the host-side integration test on Linux without the PS5 SDK:
 
 ```sh
@@ -44,8 +56,8 @@ make test-host
 1. Confirm the PS5 firmware, loader, and SDK combination can build and load the ELF.
 2. Confirm the mounted USB paths and whether supported audio files can be read from them.
 3. Identify and test an audio output API and decoder on that target combination.
-4. Test pause/resume/skip and output mixing while a game is running. The project does not currently guarantee that homebrew audio can be mixed with game audio or controlled through the PS5 Control Center.
-5. Add an on-console library/player UI and test media formats, track duration, buffering, and error handling.
+4. Implement pause/resume/skip and test output mixing while a game is running. The project does not currently guarantee that homebrew audio can be mixed with game audio or controlled through the PS5 Control Center.
+5. Add a native on-console library/player UI if the target homebrew environment supports it.
 
 ## License
 

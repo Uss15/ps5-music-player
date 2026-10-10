@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a0d13">
+  <title>PS5 Music — Library</title>
+  <style>
+    :root{color-scheme:dark;--bg:#090c12;--panel:#111722;--panel2:#151e2b;--line:#202a38;--muted:#8b98aa;--text:#f3f6fb;--accent:#b6ff63;--accent2:#81d82f;--blue:#8ab4ff;--danger:#ff8c8c;--radius:18px;--shadow:0 24px 70px #0006}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 76% -10%,#1b2d28 0,transparent 40%),var(--bg);color:var(--text);font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}.spinner{display:inline-block;width:14px;height:14px;border:2px solid #233124;border-top-color:#111911;border-radius:50%;animation:spin .7s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+    button,input{font:inherit}button{color:inherit}svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .layout{min-height:100vh;display:grid;grid-template-columns:244px minmax(0,1fr)}.sidebar{border-right:1px solid var(--line);padding:26px 16px 120px;display:flex;flex-direction:column;gap:38px;background:#0c1017d9}.brand{display:flex;align-items:center;gap:12px;padding:0 10px;font-size:16px;font-weight:800;letter-spacing:.08em}.brand-mark{width:34px;height:34px;display:grid;place-items:center;border-radius:12px;background:var(--accent);color:#111820}.brand-mark svg{width:21px;height:21px;stroke-width:2.5}.nav-label{padding:0 12px;color:#647286;font-size:10px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;margin-bottom:10px}.nav{display:grid;gap:6px}.nav a{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;color:#9da9b9;text-decoration:none;font-weight:600}.nav a.active{color:var(--accent);background:#b6ff6313}.nav a svg{width:18px;height:18px}.sidebar-note{margin-top:auto;padding:15px;border:1px solid var(--line);border-radius:14px;background:#111722}.sidebar-note strong{display:block;font-size:12px;margin-bottom:5px}.sidebar-note p{margin:0;color:var(--muted);font-size:11px;line-height:1.55}.sidebar-note .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#f4c66a;margin-right:6px}
+    .main{min-width:0;padding:28px clamp(18px,4vw,54px) 132px;max-width:1600px;width:100%;margin:0 auto}.topbar{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:35px}.crumb{color:var(--muted);font-size:13px}.crumb b{color:#cdd5e1;font-weight:600}.top-actions{display:flex;align-items:center;gap:12px}.connection-pill{display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--line);border-radius:999px;color:#aeb9c9;font-size:12px}.connection-pill i{width:7px;height:7px;border-radius:50%;background:#77859a}.connection-pill.online i{background:var(--accent);box-shadow:0 0 12px #b6ff6380}.avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#1b2635;color:#d9e2ef;font-size:12px;font-weight:700}
+    .hero{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:24px;min-height:210px;padding:34px 38px;border:1px solid #293840;border-radius:24px;background:linear-gradient(110deg,#111b20 0%,#14201d 46%,#182623 100%);box-shadow:var(--shadow);margin-bottom:28px}.hero:after{content:"";position:absolute;width:360px;height:360px;right:3%;top:-200px;border-radius:50%;background:#b6ff6310;filter:blur(2px)}.hero-content{position:relative;z-index:1;max-width:600px}.eyebrow{display:flex;align-items:center;gap:8px;color:var(--accent);font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}.eyebrow svg{width:15px;height:15px}.hero h1{font-size:clamp(30px,4vw,46px);line-height:1.08;letter-spacing:-.045em;margin:13px 0 10px}.hero p{margin:0;color:#a8b5b6;max-width:520px}.hero-art{position:relative;z-index:1;width:142px;height:142px;flex:0 0 142px;border:1px solid #3a4a3f;border-radius:28px;background:linear-gradient(145deg,#263c31,#17231e);display:grid;place-items:center;transform:rotate(5deg)}.hero-art:before,.hero-art:after{content:"";position:absolute;border:1px solid #78916f45;border-radius:21px;inset:12px;transform:rotate(10deg)}.hero-art:after{inset:25px;transform:rotate(-9deg)}.bars{display:flex;align-items:center;gap:5px;height:48px;z-index:1}.bars i{display:block;width:5px;border-radius:5px;background:var(--accent);height:18px;opacity:.95}.bars i:nth-child(2),.bars i:nth-child(6){height:32px}.bars i:nth-child(3),.bars i:nth-child(5){height:43px}.bars i:nth-child(4){height:26px}
+    .connect{display:grid;grid-template-columns:minmax(190px,1fr) 105px auto;gap:9px;align-items:end;max-width:720px;margin:0 0 28px}.field label{display:block;margin:0 0 7px 2px;color:#9aa7b8;font-size:11px;font-weight:700}.field input{width:100%;height:44px;border:1px solid var(--line);border-radius:12px;background:#0f151e;padding:0 13px;color:var(--text);outline:none}.field input:focus{border-color:#7eb947;box-shadow:0 0 0 3px #b6ff6312}.btn{height:44px;display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:0 17px;border:1px solid transparent;border-radius:12px;background:var(--accent);color:#121911;font-weight:800;font-size:13px;cursor:pointer;transition:transform .15s,background .15s}.btn:hover:not(:disabled){background:#c6ff8a;transform:translateY(-1px)}.btn svg{width:17px;height:17px}.btn.secondary{border-color:var(--line);background:#151d28;color:#d7e0eb}.btn.secondary:hover:not(:disabled){background:#1c2735}.btn:disabled{opacity:.48;cursor:not-allowed}
+    .section-head{display:flex;align-items:end;justify-content:space-between;gap:20px;margin:12px 0 15px}.section-head h2{font-size:20px;letter-spacing:-.02em;margin:0}.section-head p{margin:4px 0 0;color:var(--muted);font-size:12px}.head-tools{display:flex;align-items:center;gap:10px}.search{position:relative}.search svg{position:absolute;left:12px;top:12px;width:17px;height:17px;color:#8190a3}.search input{width:min(270px,40vw);height:40px;border:1px solid var(--line);border-radius:11px;background:#0f151e;padding:0 12px 0 38px;outline:none;color:var(--text)}.search input:focus{border-color:#465b3f}.refresh{height:40px;width:42px;border:1px solid var(--line);border-radius:11px;background:#121923;display:grid;place-items:center;cursor:pointer;color:#b8c4d4}.refresh:hover{border-color:#52604c;color:var(--accent)}
+    .library{overflow:hidden;border:1px solid var(--line);border-radius:17px;background:#0e141c}.table-head,.track{display:grid;grid-template-columns:46px minmax(0,1fr) 160px 75px;align-items:center;gap:12px}.table-head{padding:12px 19px;border-bottom:1px solid var(--line);color:#738196;font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.track-list{min-height:120px}.track{min-height:70px;padding:10px 19px;border-bottom:1px solid #1a232e;cursor:pointer;transition:background .15s}.track:last-child{border-bottom:0}.track:hover{background:#141d28}.track.selected{background:#b6ff630d}.num{color:#7e8ba0;font-size:12px;text-align:center}.track.selected .num{color:var(--accent)}.track-main{min-width:0;display:flex;align-items:center;gap:13px}.cover{width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;border:1px solid #2a3b37;border-radius:11px;background:linear-gradient(145deg,#25372f,#15211f);color:#a4ee69}.cover svg{width:18px;height:18px}.track-name{min-width:0}.track-name strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:650}.track-name small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:3px;color:#78869a;font-size:11px}.source{color:#9aa8bb;font-size:11px}.tag{display:inline-flex;padding:4px 8px;border-radius:7px;background:#1a2431;color:#9fb0c7;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.03em}.empty{min-height:220px;display:grid;place-items:center;text-align:center;padding:28px;color:#97a4b4}.empty-icon{width:50px;height:50px;display:grid;place-items:center;margin:0 auto 12px;border-radius:16px;background:#18212c;color:#96a5ba}.empty h3{margin:0 0 5px;color:#d8e0ea;font-size:14px}.empty p{max-width:420px;margin:0;color:#8190a3;font-size:12px}.empty .error{color:#ffb6a5}.empty[hidden]{display:none}
+    .notice{display:flex;align-items:flex-start;gap:10px;margin-top:17px;padding:13px 15px;border:1px solid #393629;border-radius:12px;background:#1b1912;color:#c8be9d;font-size:11px}.notice svg{width:16px;height:16px;flex:0 0 16px;color:#e9c46a;margin-top:1px}.notice strong{color:#e9d89a}
+    .player{position:fixed;z-index:5;bottom:0;left:244px;right:0;display:grid;grid-template-columns:minmax(190px,1fr) minmax(240px,1.2fr) minmax(170px,1fr);align-items:center;gap:25px;padding:14px clamp(18px,4vw,54px);border-top:1px solid #26303d;background:#0e141df2;backdrop-filter:blur(18px)}.now{min-width:0;display:flex;align-items:center;gap:12px}.now-art{width:46px;height:46px;flex:0 0 46px;display:grid;place-items:center;border:1px solid var(--line);border-radius:12px;background:#151d28;color:#8290a2}.now-title{min-width:0}.now-title strong,.now-title small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.now-title strong{font-size:12px}.now-title small{margin-top:3px;color:#7f8da0;font-size:10px}.controls{display:grid;justify-items:center;gap:5px}.control-buttons{display:flex;align-items:center;gap:18px}.control{width:34px;height:34px;border:0;background:transparent;display:grid;place-items:center;color:#606c7d;cursor:not-allowed}.control svg{width:18px;height:18px}.control.play{width:38px;height:38px;border-radius:50%;background:#29313a;color:#84909e}.control-hint{font-size:9px;color:#778394;text-align:center}.progress-wrap{display:flex;align-items:center;gap:8px;width:100%;color:#647184;font-size:9px}.progress{height:3px;flex:1;border-radius:99px;background:#2c3540;overflow:hidden}.progress span{display:block;width:0;height:100%;background:var(--accent)}.volume{display:flex;align-items:center;justify-content:flex-end;gap:10px;color:#637082}.volume input{width:95px;accent-color:#82906f;opacity:.45}.mobile-label{display:none}
+    @media(max-width:1050px){.layout{grid-template-columns:205px minmax(0,1fr)}.player{left:205px;grid-template-columns:minmax(140px,1fr) minmax(210px,1fr)}.volume{display:none}.hero{padding:28px}.table-head,.track{grid-template-columns:40px minmax(0,1fr) 115px 65px}}
+    @media(max-width:720px){.layout{display:block}.sidebar{display:none}.main{padding:18px 15px 152px}.topbar{margin-bottom:22px}.hero{min-height:180px;padding:23px;border-radius:19px}.hero-art{width:90px;height:90px;flex-basis:90px;border-radius:21px}.bars{transform:scale(.75)}.hero h1{font-size:33px}.hero p{font-size:13px}.connect{grid-template-columns:minmax(0,1fr) 88px;gap:8px}.connect .btn{grid-column:1/-1;width:100%}.section-head{align-items:flex-start;flex-direction:column}.head-tools{width:100%}.search{flex:1}.search input{width:100%}.table-head{grid-template-columns:34px minmax(0,1fr) 60px}.table-head span:nth-child(3),.track .source{display:none}.track{grid-template-columns:34px minmax(0,1fr) 60px;padding:9px 12px;gap:8px}.track .tag{text-align:center;justify-content:center}.player{left:0;grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:10px 14px 12px}.now{gap:9px}.now-art{width:40px;height:40px;flex-basis:40px}.now-title strong{font-size:11px}.now-title small{font-size:9px}.controls{justify-items:end}.control-buttons{gap:7px}.control{width:30px;height:30px}.control.play{width:34px;height:34px}.control-hint{display:none}.progress-wrap{display:none}.mobile-label{display:inline}.connection-pill{font-size:0;padding:9px}.connection-pill i{width:8px;height:8px}.avatar{display:none}}
+    @media(max-width:410px){.hero-art{display:none}.hero h1{font-size:30px}.crumb{font-size:11px}.top-actions{gap:7px}.table-head,.track{grid-template-columns:28px minmax(0,1fr) 54px;gap:6px}.cover{width:36px;height:36px;flex-basis:36px}.track-name strong{font-size:12px}.tag{font-size:9px;padding:4px 5px}}
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-mark"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span><span>PS5 MUSIC</span></div>
+      <div><div class="nav-label">Workspace</div><nav class="nav"><a class="active" href="#library"><svg viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16"/></svg>Music library</a><a href="#devices"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h.01M10 9h.01M13 9h.01M7 13h10"/></svg>PS5 connection</a></nav></div>
+      <div class="sidebar-note"><strong><span class="dot"></span>Playback engine pending</strong><p>Your library can be scanned now. Audio playback and in-game mixing are not implemented in the payload yet.</p></div>
+    </aside>
+    <main class="main" id="library">
+      <header class="topbar"><div class="crumb">Workspace <span aria-hidden="true">/</span> <b>Music library</b></div><div class="top-actions"><div class="connection-pill" id="connectionPill"><i></i><span id="connectionText">Not connected</span></div><div class="avatar" aria-label="Music library">ML</div></div></header>
+      <section class="hero"><div class="hero-content"><div class="eyebrow"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>YOUR PERSONAL SOUNDTRACK</div><h1>Your music.<br>On your console.</h1><p>Browse the music library discovered by your PS5 payload. Connect to scan your console and USB music folders.</p></div><div class="hero-art" aria-hidden="true"><div class="bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div></section>
+      <section class="connect" id="devices" aria-label="Connect to PS5"><div class="field"><label for="ps5Host">PS5 IP address</label><input id="ps5Host" type="text" inputmode="decimal" autocomplete="off" placeholder="e.g. 192.168.1.50"></div><div class="field"><label for="ps5Port">Payload port</label><input id="ps5Port" type="number" min="1" max="65535" value="9023"></div><button class="btn" id="connectBtn" type="button"><svg viewBox="0 0 24 24"><path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.6 5.6l2.1 2.1m8.6 8.6 2.1 2.1m0-12.8-2.1 2.1m-8.6 8.6-2.1 2.1"/><circle cx="12" cy="12" r="5"/></svg>Connect &amp; scan</button></section>
+      <section aria-labelledby="libraryTitle"><div class="section-head"><div><h2 id="libraryTitle">Your library</h2><p id="libraryCount">Connect to your PS5 to load tracks.</p></div><div class="head-tools"><label class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="searchInput" type="search" placeholder="Search your music" aria-label="Search your music" disabled></label><button class="refresh" id="refreshBtn" type="button" title="Refresh library" aria-label="Refresh library" disabled><svg viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.6 9A7 7 0 0 1 18 6l2 6M4 12l2 6a7 7 0 0 0 12.4-3"/></svg></button></div></div>
+        <div class="library"><div class="table-head"><span>#</span><span>Title</span><span>Location</span><span>Format</span></div><div id="trackList" class="track-list"><div class="empty" id="emptyState"><div><div class="empty-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div><h3>Your library is waiting</h3><p>Enter your PS5's local IP address above and select <strong>Connect &amp; scan</strong> to browse its music folders.</p></div></div></div></div>
+      </section>
+      <div class="notice" role="note"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8h.01"/></svg><div><strong>Playback is not available in this build.</strong> The playlist service is working, but audio output, decoding, pause/skip, and game-audio mixing still need to be implemented and tested on the target PS5.</div></div>
+    </main>
+  </div>
+  <footer class="player" aria-label="Playback controls"><div class="now"><div class="now-art"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div><div class="now-title"><strong id="nowTitle">Nothing playing</strong><small id="nowSubtitle">Select a track to preview its details</small></div></div><div class="controls"><div class="control-buttons"><button class="control" type="button" disabled title="Previous track — audio engine not implemented" aria-label="Previous track"><svg viewBox="0 0 24 24"><path d="M6 5v14M18 6l-9 6 9 6z"/></svg></button><button class="control play" type="button" disabled title="Playback — audio engine not implemented" aria-label="Play or pause"><svg viewBox="0 0 24 24"><path d="M9 5v14l11-7z"/></svg></button><button class="control" type="button" disabled title="Next track — audio engine not implemented" aria-label="Next track"><svg viewBox="0 0 24 24"><path d="M18 5v14M6 6l9 6-9 6z"/></svg></button></div><div class="control-hint">Playback controls become available when the PS5 audio engine is implemented.</div><div class="progress-wrap"><span>0:00</span><div class="progress"><span></span></div><span>0:00</span></div></div><div class="volume"><svg viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15 9a5 5 0 0 1 0 6m3-9a9 9 0 0 1 0 12"/></svg><input type="range" min="0" max="100" value="50" aria-label="Volume" disabled title="Volume control is not available yet"></div></footer>
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const hostInput = $('ps5Host');
+    const portInput = $('ps5Port');
+    const connectBtn = $('connectBtn');
+    const refreshBtn = $('refreshBtn');
+    const searchInput = $('searchInput');
+    const tracksEl = $('trackList');
+    const emptyEl = $('emptyState');
+    const pill = $('connectionPill');
+    let tracks = [];
+
+    function setConnection(online, text) {
+      pill.classList.toggle('online', online);
+      $('connectionText').textContent = text;
+    }
+    function showEmpty(title, message, isError = false) {
+      tracksEl.innerHTML = '';
+      const box = document.createElement('div');
+      box.className = 'empty';
+      const inner = document.createElement('div');
+      inner.innerHTML = '<div class="empty-icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>';
+      const heading = document.createElement('h3'); heading.textContent = title;
+      const text = document.createElement('p'); text.textContent = message; if (isError) text.className = 'error';
+      inner.append(heading, text); box.append(inner); tracksEl.append(box);
+    }
+    function locationLabel(path) {
+      if (path.startsWith('/mnt/usb0')) return 'USB drive 0';
+      if (path.startsWith('/mnt/usb1')) return 'USB drive 1';
+      return 'Console storage';
+    }
+    function renderTracks() {
+      const query = searchInput.value.trim().toLowerCase();
+      const shown = tracks.filter(t => (t.title + ' ' + t.path).toLowerCase().includes(query));
+      tracksEl.innerHTML = '';
+      if (!shown.length) {
+        showEmpty(tracks.length ? 'No matches found' : 'No music files found', tracks.length ? 'Try another title or folder name.' : 'No supported audio files were found in the configured PS5 and USB locations.');
+        return;
+      }
+      for (const t of shown) {
+        const row = document.createElement('div'); row.className = 'track'; row.tabIndex = 0; row.setAttribute('role', 'button');
+        const number = document.createElement('span'); number.className = 'num'; number.textContent = t.number;
+        const main = document.createElement('div'); main.className = 'track-main';
+        const cover = document.createElement('div'); cover.className = 'cover'; cover.innerHTML = '<svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>';
+        const label = document.createElement('div'); label.className = 'track-name';
+        const title = document.createElement('strong'); title.textContent = t.title;
+        const path = document.createElement('small'); path.textContent = t.path;
+        label.append(title, path); main.append(cover, label);
+        const source = document.createElement('span'); source.className = 'source'; source.textContent = locationLabel(t.path);
+        const format = document.createElement('span'); const tag = document.createElement('span'); tag.className = 'tag'; tag.textContent = t.title.split('.').pop().toUpperCase(); format.append(tag);
+        const select = () => { document.querySelectorAll('.track.selected').forEach(el => el.classList.remove('selected')); row.classList.add('selected'); $('nowTitle').textContent = t.title; $('nowSubtitle').textContent = `${locationLabel(t.path)} · Playback not available yet`; };
+        row.addEventListener('click', select); row.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(); } });
+        row.append(number, main, source, format); tracksEl.append(row);
+      }
+    }
+    async function scan() {
+      const host = hostInput.value.trim(); const port = portInput.value.trim() || '9023';
+      if (!host) { showEmpty('Enter your PS5 IP address', 'Use the local IP shown in your PS5 network settings.'); hostInput.focus(); return; }
+      connectBtn.disabled = true; connectBtn.innerHTML = '<span class="spinner"></span>Scanning…';
+      $('libraryCount').textContent = 'Connecting to your PS5…'; setConnection(false, 'Connecting…');
+      try {
+        const url = `/api/playlist?host=${encodeURIComponent(host)}&port=${encodeURIComponent(port)}`;
+        const response = await fetch(url, {cache:'no-store'}); const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Could not load the playlist.');
+        tracks = data.tracks || [];
+        localStorage.setItem('ps5MusicHost', host); localStorage.setItem('ps5MusicPort', port);
+        setConnection(true, 'Connected'); $('libraryCount').textContent = `${tracks.length} ${tracks.length === 1 ? 'track' : 'tracks'} found`;
+        searchInput.disabled = false; refreshBtn.disabled = false; renderTracks();
+      } catch (err) {
+        tracks = []; setConnection(false, 'Not connected'); $('libraryCount').textContent = 'Could not connect to the PS5 payload.';
+        showEmpty('Connection failed', err.message, true);
+      } finally {
+        connectBtn.disabled = false;
+        connectBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.6 5.6l2.1 2.1m8.6 8.6 2.1 2.1m0-12.8-2.1 2.1m-8.6 8.6-2.1 2.1"/><circle cx="12" cy="12" r="5"/></svg>Connect &amp; scan';
+      }
+    }
+    connectBtn.addEventListener('click', scan); refreshBtn.addEventListener('click', scan);
+    searchInput.addEventListener('input', renderTracks);
+    hostInput.value = localStorage.getItem('ps5MusicHost') || '';
+    portInput.value = localStorage.getItem('ps5MusicPort') || '9023';
+    if (hostInput.value) $('libraryCount').textContent = 'Select Connect & scan to load the latest playlist.';
+  </script>
+</body>
+</html>

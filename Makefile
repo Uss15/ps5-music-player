@@ -34,4 +34,7 @@ test: $(ELF)
 test-host:
 	python3 -m unittest discover -s tests -v
 
-.PHONY: all clean test test-host
+run-web:
+	python3 host/music_web.py
+
+.PHONY: all clean test test-host run-web
