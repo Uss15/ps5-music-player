@@ -6,6 +6,8 @@ ifeq ($(strip $(PS5_PAYLOAD_SDK)),)
 $(error Set PS5_PAYLOAD_SDK to your installed ps5-payload-sdk directory)
 endif
 
+include $(PS5_PAYLOAD_SDK)/toolchain/prospero.mk
+
 ELF := ps5-music-player.elf
 CFLAGS := -Wall -Wextra -Werror -O2 -g
 LDLIBS := -lSceNet

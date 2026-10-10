@@ -22,6 +22,7 @@ Firmware support depends on the SDK, loader, and libraries available in your env
 
 ```sh
 export PS5_PAYLOAD_SDK=/opt/ps5-payload-sdk
+export LLVM_CONFIG=/usr/bin/llvm-config-18
 make
 ```
 
