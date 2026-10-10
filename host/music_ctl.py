@@ -1,22 +1,45 @@
 #!/usr/bin/env python3
+"""Small TCP client for the PS5 Music Player payload."""
 import argparse
 import socket
+import sys
+
+COMMANDS = {
+    "playlist": "PLAYLIST",
+    "status": "STATUS",
+    "next": "NEXT",
+    "previous": "PREV",
+    "pause": "PAUSE",
+    "resume": "RESUME",
+    "stop": "STOP",
+}
 
 
-def main():
+def main() -> int:
     parser = argparse.ArgumentParser(description="PS5 Music Player host controller")
-    parser.add_argument("--host", required=True)
+    parser.add_argument("--host", required=True, help="PS5 IP address")
     parser.add_argument("--port", type=int, default=9023)
-    parser.add_argument("command", choices=["playlist", "next"])
+    parser.add_argument("command", choices=COMMANDS)
     args = parser.parse_args()
-    with socket.create_connection((args.host, args.port), timeout=10) as sock:
-        sock.sendall(("PLAYLIST\n" if args.command == "playlist" else "NEXT\n").encode())
-        while True:
-            data = sock.recv(4096)
-            if not data: break
-            print(data.decode("utf-8", errors="replace"), end="")
-            if b".\n" in data or args.command == "next": break
+
+    try:
+        with socket.create_connection((args.host, args.port), timeout=5) as sock:
+            sock.settimeout(5)
+            sock.sendall((COMMANDS[args.command] + "\n").encode("ascii"))
+            stream = sock.makefile("rb")
+            while True:
+                line = stream.readline()
+                if not line:
+                    break
+                text = line.decode("utf-8", errors="replace")
+                print(text, end="")
+                if args.command != "playlist" or text.rstrip("\r\n") == ".":
+                    break
+    except (OSError, TimeoutError) as exc:
+        print(f"Could not contact PS5 at {args.host}:{args.port}: {exc}", file=sys.stderr)
+        return 1
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
