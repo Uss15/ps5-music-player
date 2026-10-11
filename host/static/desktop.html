@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#090c12">
+<title>PS5 Music Player — Desktop</title>
+<style>
+:root{color-scheme:dark;--bg:#090c12;--panel:#111722;--line:#26303d;--muted:#93a0b1;--text:#f3f6fb;--accent:#b6ff63;--accent2:#88dc39}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 75% 0,#1b3026 0,transparent 42%),var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}.shell{max-width:1140px;margin:auto;padding:28px 22px 150px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:34px}.brand{display:flex;gap:11px;align-items:center;font-weight:850;letter-spacing:.08em}.mark{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:var(--accent);color:#10170d;font-size:20px}.badge{font-size:11px;color:#d7e5d2;border:1px solid #334337;background:#111c18;border-radius:999px;padding:6px 10px}.hero{padding:34px;border:1px solid #2a3a32;border-radius:24px;background:linear-gradient(110deg,#111b20,#17251e);margin-bottom:26px}.eyebrow{font-size:11px;letter-spacing:.15em;color:var(--accent);font-weight:800}.hero h1{font-size:clamp(32px,5vw,48px);letter-spacing:-.04em;line-height:1.08;margin:14px 0 10px}.hero p{margin:0;color:#aab7b4;max-width:660px}.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:18px 0}.button{border:1px solid transparent;border-radius:12px;background:var(--accent);color:#11180d;font-weight:800;padding:12px 17px;cursor:pointer}.button:hover{background:#c6ff8a}.button.secondary{background:#151d28;border-color:var(--line);color:var(--text)}.button:disabled{opacity:.5;cursor:not-allowed}.hint{color:var(--muted);font-size:12px}.stats{color:var(--muted);margin-left:auto;font-size:13px}.search{min-width:210px;max-width:330px;flex:1;padding:11px 13px;color:var(--text);border:1px solid var(--line);border-radius:11px;background:#0f151e;outline:none}.library{border:1px solid var(--line);border-radius:17px;overflow:hidden;background:#0e141c}.head,.row{display:grid;grid-template-columns:54px minmax(0,1fr) 110px;gap:12px;align-items:center}.head{padding:12px 17px;border-bottom:1px solid var(--line);color:#8290a3;font-size:10px;font-weight:800;letter-spacing:.13em;text-transform:uppercase}.list{min-height:245px}.row{width:100%;text-align:left;padding:12px 17px;border:0;border-bottom:1px solid #1d2733;background:transparent;color:var(--text);cursor:pointer}.row:hover,.row.active{background:#b6ff6310}.row:last-child{border-bottom:0}.number{color:#8290a3;text-align:center}.title{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.path{color:#8693a5;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.format{justify-self:end;border-radius:7px;padding:4px 8px;background:#1a2431;color:#b0c1d8;font-size:10px;font-weight:800}.empty{min-height:245px;display:grid;place-items:center;text-align:center;color:var(--muted);padding:24px}.empty strong{display:block;color:#e2eaf4;margin:8px}.warning{margin-top:14px;padding:13px 15px;border:1px solid #393629;border-radius:12px;background:#1b1912;color:#d4c79e;font-size:12px}.player{position:fixed;bottom:0;left:0;right:0;z-index:4;display:grid;grid-template-columns:minmax(180px,1fr) minmax(300px,1.5fr) minmax(120px,.6fr);gap:24px;align-items:center;padding:13px max(22px,calc((100vw - 1096px)/2));background:#0e141df2;border-top:1px solid var(--line);backdrop-filter:blur(18px)}.now{min-width:0}.now strong,.now small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.now strong{font-size:13px}.now small{color:var(--muted);font-size:11px;margin-top:3px}.middle{display:grid;gap:7px}.buttons{display:flex;justify-content:center;align-items:center;gap:16px}.ctrl{width:36px;height:36px;border:1px solid var(--line);border-radius:50%;background:#151d28;color:var(--text);cursor:pointer;font-size:16px}.ctrl.primary{width:42px;height:42px;background:var(--accent);color:#11180d;border:0}.ctrl:disabled{opacity:.45;cursor:not-allowed}.timeline{display:flex;align-items:center;gap:9px;color:#96a3b5;font-size:10px}.timeline input{flex:1;accent-color:var(--accent)}.volume{display:flex;align-items:center;justify-content:flex-end;gap:9px;color:#aeb9c7}.volume input{width:90px;accent-color:var(--accent)}audio{display:none}
+@media(max-width:700px){.shell{padding:18px 14px 148px}.hero{padding:24px}.hero h1{font-size:34px}.toolbar{align-items:stretch}.toolbar .button{flex:1}.stats{width:100%;margin:0}.search{max-width:none}.player{grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:10px 13px}.middle{justify-items:end}.buttons{gap:6px}.ctrl{width:31px;height:31px}.ctrl.primary{width:36px;height:36px}.timeline{display:none}.volume{display:none}.head,.row{grid-template-columns:34px minmax(0,1fr) 54px;gap:8px}.shell{padding-bottom:128px}}
+</style>
+</head>
+<body>
+<main class="shell">
+  <header class="top"><div class="brand"><span class="mark">♫</span><span>PS5 MUSIC</span></div><span class="badge">Desktop player · local files</span></header>
+  <section class="hero"><div class="eyebrow">YOUR PERSONAL SOUNDTRACK</div><h1>Music from your computer.<br>Ready to play.</h1><p>Select a music folder to build a local playlist. Files stay in your browser and are not uploaded to a server. Playback uses your computer's audio output.</p></section>
+  <section class="toolbar" aria-label="Music library controls">
+    <input id="folder" type="file" accept="audio/*,.mp3,.wav,.ogg,.flac" webkitdirectory directory multiple hidden>
+    <button class="button" id="choose">Choose music folder</button>
+    <button class="button secondary" id="clear" disabled>Clear library</button>
+    <input class="search" id="search" type="search" placeholder="Search tracks…" aria-label="Search tracks" disabled>
+    <span class="stats" id="stats">No folder selected</span>
+  </section>
+  <section class="library" aria-label="Music library"><div class="head"><span>#</span><span>Track</span><span>Format</span></div><div class="list" id="list"><div class="empty"><div><div style="font-size:30px">♫</div><strong>Your library is waiting</strong><span>Choose a folder that contains MP3, WAV, OGG, or FLAC files.</span></div></div></div></section>
+  <div class="warning"><strong>Computer playback:</strong> audio plays on this computer only. To play on the PS5, use the separate PS5 payload and connection mode. Browser format support can vary by browser and operating system.</div>
+</main>
+<footer class="player" aria-label="Audio player">
+  <div class="now"><strong id="nowTitle">Nothing playing</strong><small id="nowPath">Choose a music folder to start</small></div>
+  <div class="middle"><div class="buttons"><button class="ctrl" id="previous" title="Previous track" aria-label="Previous track" disabled>⏮</button><button class="ctrl primary" id="toggle" title="Play or pause" aria-label="Play or pause" disabled>▶</button><button class="ctrl" id="next" title="Next track" aria-label="Next track" disabled>⏭</button></div><div class="timeline"><span id="elapsed">0:00</span><input id="seek" type="range" min="0" max="1000" value="0" aria-label="Seek" disabled><span id="duration">0:00</span></div></div>
+  <label class="volume" aria-label="Volume">🔊 <input id="volume" type="range" min="0" max="1" step="0.01" value="0.8"></label>
+</footer>
+<audio id="audio" preload="metadata"></audio>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const folder = $('folder'), audio = $('audio');
+  const supported = /\.(mp3|wav|ogg|flac)$/i;
+  let tracks = [], current = -1, currentUrl = '';
+  function fmt(seconds) { if (!Number.isFinite(seconds) || seconds < 0) return '0:00'; const m=Math.floor(seconds/60), s=Math.floor(seconds%60); return `${m}:${String(s).padStart(2,'0')}`; }
+  function setControls(enabled) { for (const id of ['previous','toggle','next']) $(id).disabled=!enabled; $('seek').disabled=!enabled; $('clear').disabled=!tracks.length; }
+  function display() {
+    const term=$('search').value.trim().toLowerCase(), list=$('list'); list.replaceChildren();
+    const visible=tracks.map((t,i)=>({t,i})).filter(({t})=>`${t.name} ${t.relative}`.toLowerCase().includes(term));
+    if (!visible.length) { const empty=document.createElement('div'); empty.className='empty'; empty.innerHTML=tracks.length?'<div><strong>No matches found</strong><span>Try another search.</span></div>':'<div><div style="font-size:30px">♫</div><strong>Your library is waiting</strong><span>Choose a folder that contains MP3, WAV, OGG, or FLAC files.</span></div>'; list.append(empty); }
+    for (const {t,i} of visible) {
+      const row=document.createElement('button'); row.className='row'+(i===current?' active':''); row.type='button';
+      const n=document.createElement('span'); n.className='number'; n.textContent=String(i+1);
+      const title=document.createElement('span'); title.className='title'; title.textContent=t.name; title.title=t.relative;
+      const type=document.createElement('span'); type.className='format'; type.textContent=t.name.split('.').pop().toUpperCase();
+      row.append(n,title,type); row.addEventListener('click',()=>play(i)); list.append(row);
+    }
+    $('stats').textContent=tracks.length?`${tracks.length} ${tracks.length===1?'track':'tracks'} · browser-local`:'No supported audio files found';
+  }
+  function loadFolder(files) {
+    tracks=Array.from(files).filter(f=>supported.test(f.name)).map(file=>({file,name:file.name,relative:file.webkitRelativePath||file.name})).sort((a,b)=>a.relative.localeCompare(b.relative,undefined,{numeric:true,sensitivity:'base'}));
+    current=-1; if(currentUrl){URL.revokeObjectURL(currentUrl);currentUrl='';} audio.pause();audio.removeAttribute('src');audio.load(); $('search').disabled=!tracks.length; $('clear').disabled=!tracks.length; setControls(!!tracks.length); display();
+    if(tracks.length){$('search').focus();$('nowTitle').textContent='Library ready';$('nowPath').textContent='Select a track to play it on this computer';} else {$('nowTitle').textContent='Nothing playing';$('nowPath').textContent='Select a folder with supported audio files';}
+  }
+  async function play(index) {
+    if(!tracks.length)return; current=(index+tracks.length)%tracks.length;
+    if(currentUrl)URL.revokeObjectURL(currentUrl); currentUrl=URL.createObjectURL(tracks[current].file); audio.src=currentUrl; audio.volume=Number($('volume').value); $('nowTitle').textContent=tracks[current].name; $('nowPath').textContent=tracks[current].relative; display();
+    try{await audio.play();$('toggle').textContent='Ⅱ';}catch(err){$('nowPath').textContent=`Could not play this format in this browser: ${err.message}`;}
+  }
+  $('choose').addEventListener('click',()=>folder.click()); folder.addEventListener('change',e=>loadFolder(e.target.files));
+  $('clear').addEventListener('click',()=>{folder.value='';loadFolder([]);}); $('search').addEventListener('input',display);
+  $('previous').addEventListener('click',()=>play(current-1)); $('next').addEventListener('click',()=>play(current+1));
+  $('toggle').addEventListener('click',async()=>{if(current<0){if(tracks.length)await play(0);return;}if(audio.paused){try{await audio.play();$('toggle').textContent='Ⅱ';}catch(err){$('nowPath').textContent=`Playback failed: ${err.message}`;}}else{audio.pause();$('toggle').textContent='▶';}});
+  $('volume').addEventListener('input',()=>{audio.volume=Number($('volume').value);});
+  audio.addEventListener('timeupdate',()=>{if(audio.duration){$('seek').value=String(Math.round(audio.currentTime/audio.duration*1000));$('elapsed').textContent=fmt(audio.currentTime);$('duration').textContent=fmt(audio.duration);}});
+  $('seek').addEventListener('input',()=>{if(audio.duration)audio.currentTime=Number($('seek').value)/1000*audio.duration;});
+  audio.addEventListener('ended',()=>play(current+1)); audio.addEventListener('pause',()=>{$('toggle').textContent='▶';}); audio.addEventListener('play',()=>{$('toggle').textContent='Ⅱ';});
+  audio.addEventListener('error',()=>{if(current>=0)$('nowPath').textContent='This browser cannot decode this audio file.';});
+  window.addEventListener('beforeunload',()=>{if(currentUrl)URL.revokeObjectURL(currentUrl);});
+})();
+</script>
+</body>
+</html>

@@ -6,6 +6,7 @@ import argparse
 import ipaddress
 import json
 import socket
+import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlsplit
@@ -87,8 +88,19 @@ class MusicWebHandler(BaseHTTPRequestHandler):
 
     def do_GET(self) -> None:
         parsed = urlsplit(self.path)
-        if parsed.path == "/" or parsed.path == "/index.html":
-            body = (STATIC_DIR / "index.html").read_bytes()
+        if parsed.path == "/ps5-controls.js":
+            body = (STATIC_DIR / "ps5-controls.js").read_bytes()
+            self.send_response(200)
+            self.send_header("Content-Type", "text/javascript; charset=utf-8")
+            self.send_header("Content-Length", str(len(body)))
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("X-Content-Type-Options", "nosniff")
+            self.end_headers()
+            self.wfile.write(body)
+            return
+        if parsed.path in {"/", "/index.html", "/desktop"}:
+            page = "desktop.html" if parsed.path == "/desktop" else "index.html"
+            body = (STATIC_DIR / page).read_bytes()
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.send_header("Content-Length", str(len(body)))
@@ -96,6 +108,23 @@ class MusicWebHandler(BaseHTTPRequestHandler):
             self.send_header("X-Content-Type-Options", "nosniff")
             self.end_headers()
             self.wfile.write(body)
+            return
+        if parsed.path == "/api/status":
+            query = parse_qs(parsed.query)
+            try:
+                host, port = validate_target(query.get("host", [""])[0], query.get("port", ["9023"])[0])
+                response = exchange(host, port, "STATUS")
+                fields = response[0].split("\t", 6) if response else []
+                if len(fields) < 6:
+                    raise BridgeError("The PS5 returned malformed playback status.")
+                self.send_json(200, {
+                    "state": fields[0], "track": int(fields[1]), "positionMs": int(fields[2]),
+                    "durationMs": int(fields[3]), "volume": int(fields[4]),
+                    "available": fields[5] == "1",
+                    "error": fields[6] if len(fields) > 6 else "",
+                })
+            except (BridgeError, ValueError) as exc:
+                self.send_json(502, {"error": str(exc)})
             return
         if parsed.path != "/api/playlist":
             self.send_json(404, {"error": "Not found."})
@@ -127,7 +156,18 @@ class MusicWebHandler(BaseHTTPRequestHandler):
                 raise BridgeError("Expected a JSON object.")
             host, port = validate_target(payload.get("host", ""), payload.get("port", 9023))
             requested = payload.get("command", "")
-            command = CONTROL_COMMANDS.get(requested)
+            if requested == "play":
+                track = payload.get("track")
+                if type(track) is not int or not 1 <= track <= MAX_TRACKS:
+                    raise BridgeError("Track must be a positive playlist number.")
+                command = f"PLAY {track}"
+            elif requested == "volume":
+                volume = payload.get("volume")
+                if type(volume) is not int or not 0 <= volume <= 100:
+                    raise BridgeError("Volume must be an integer between 0 and 100.")
+                command = f"VOLUME {volume}"
+            else:
+                command = CONTROL_COMMANDS.get(requested)
             if not command:
                 raise BridgeError("Unknown control command.")
             response = exchange(host, port, command)
@@ -142,12 +182,15 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Serve the PS5 Music Player web UI")
     parser.add_argument("--listen", default="127.0.0.1", help="Bind address (default: 127.0.0.1)")
     parser.add_argument("--port", type=int, default=8765, help="Web UI port")
+    parser.add_argument("--open-desktop", action="store_true", help="Open the local computer music player in a browser")
     args = parser.parse_args()
     if not 1 <= args.port <= 65535:
         parser.error("--port must be between 1 and 65535")
     server = ThreadingHTTPServer((args.listen, args.port), MusicWebHandler)
     print(f"PS5 Music Player UI: http://{args.listen}:{args.port}")
     print("Keep this process on a trusted network; the UI bridge has no login yet.")
+    if args.open_desktop:
+        webbrowser.open(f"http://127.0.0.1:{args.port}/desktop")
     try:
         server.serve_forever()
     except KeyboardInterrupt:

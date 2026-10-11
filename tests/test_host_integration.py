@@ -13,7 +13,7 @@ REPO = Path(__file__).resolve().parents[1]
 
 
 class PlaylistIntegrationTest(unittest.TestCase):
-    def test_recursive_sorted_scan_and_explicit_audio_status(self) -> None:
+    def test_recursive_scan_and_audio_status(self) -> None:
         with tempfile.TemporaryDirectory(prefix="ps5-music-test-") as tmp:
             root = Path(tmp)
             library = root / "library"
@@ -23,8 +23,9 @@ class PlaylistIntegrationTest(unittest.TestCase):
             usb0.mkdir()
             usb1.mkdir()
             (library / "zeta.mp3").write_bytes(b"test")
-            (library / "nested" / "Alpha.FLAC").write_bytes(b"test")
-            (usb0 / "beta.ogg").write_bytes(b"test")
+            (library / "nested" / "Alpha.WAV").write_bytes(b"test")
+            (usb0 / "beta.mp3").write_bytes(b"test")
+            (usb0 / "skip.ogg").write_bytes(b"not supported by the PS5 backend")
             (usb1 / "ignore.txt").write_text("not audio", encoding="utf-8")
             try:
                 (usb1 / "linked.wav").symlink_to(library / "zeta.mp3")
@@ -40,7 +41,9 @@ class PlaylistIntegrationTest(unittest.TestCase):
                 "gcc", "-std=gnu11", "-Wall", "-Wextra", "-Werror", "-O2",
                 f"-DPORT={port}", f'-DMUSIC_ROOT="{library}"',
                 f'-DUSB0_ROOT="{usb0}"', f'-DUSB1_ROOT="{usb1}"',
-                str(REPO / "payload" / "main.c"), "-o", str(binary),
+                "-pthread", str(REPO / "payload" / "main.c"),
+                str(REPO / "payload" / "audio.c"), str(REPO / "tests" / "audio_stub.c"),
+                "-o", str(binary),
             ]
             subprocess.run(compile_cmd, check=True, capture_output=True, text=True)
             server = subprocess.Popen([str(binary)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -67,9 +70,9 @@ class PlaylistIntegrationTest(unittest.TestCase):
                 self.assertEqual(lines[-1], ".")
                 listed = [line.split("\t", 1)[1] for line in lines[1:-1]]
                 self.assertEqual(listed, sorted([
-                    str(library / "nested" / "Alpha.FLAC"),
+                    str(library / "nested" / "Alpha.WAV"),
                     str(library / "zeta.mp3"),
-                    str(usb0 / "beta.ogg"),
+                    str(usb0 / "beta.mp3"),
                 ], key=str.casefold))
 
                 status = subprocess.run(
@@ -77,7 +80,8 @@ class PlaylistIntegrationTest(unittest.TestCase):
                      "--port", str(port), "status"],
                     check=True, capture_output=True, text=True, timeout=5,
                 )
-                self.assertIn("ERR audio-backend-not-implemented", status.stdout)
+                self.assertIn("OK", status.stdout)
+                self.assertIn("STOPPED", status.stdout)
             finally:
                 server.terminate()
                 try:
