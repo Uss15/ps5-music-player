@@ -90,7 +90,7 @@
         label.append(title, path); main.append(cover, label);
         const source = document.createElement('span'); source.className = 'source'; source.textContent = locationLabel(t.path);
         const format = document.createElement('span'); const tag = document.createElement('span'); tag.className = 'tag'; tag.textContent = t.title.split('.').pop().toUpperCase(); format.append(tag);
-        const select = () => { document.querySelectorAll('.track.selected').forEach(el => el.classList.remove('selected')); row.classList.add('selected'); $('nowTitle').textContent = t.title; $('nowSubtitle').textContent = `${locationLabel(t.path)} · Playback not available yet`; };
+        const select = () => { document.querySelectorAll('.track.selected').forEach(el => el.classList.remove('selected')); row.classList.add('selected'); $('nowTitle').textContent = t.title; $('nowSubtitle').textContent = `${locationLabel(t.path)} · select to play when AudioOut is ready`; };
         row.addEventListener('click', select); row.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(); } });
         row.append(number, main, source, format); tracksEl.append(row);
       }
@@ -122,5 +122,6 @@
     portInput.value = localStorage.getItem('ps5MusicPort') || '9023';
     if (hostInput.value) $('libraryCount').textContent = 'Select Connect & scan to load the latest playlist.';
   </script>
+  <script src="/ps5-controls.js"></script>
 </body>
 </html>

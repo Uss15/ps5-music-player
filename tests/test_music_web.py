@@ -42,9 +42,15 @@ class FakePayload:
                         break
                     command += part
                 if command.strip() == b"PLAYLIST":
-                    conn.sendall(b"OK\n1\t/mnt/usb0/Music/Sample.FLAC\n.\n")
+                    conn.sendall(b"OK\n1\t/mnt/usb0/Music/Sample.MP3\n.\n")
+                elif command.strip() == b"STATUS":
+                    conn.sendall(b"OK\nSTOPPED\t0\t0\t0\t80\t1\t\n")
+                elif command.strip() == b"PLAY 1":
+                    conn.sendall(b"OK\nQUEUED\n")
+                elif command.strip() == b"VOLUME 70":
+                    conn.sendall(b"OK\nVOLUME_SET\n")
                 else:
-                    conn.sendall(b"ERR audio-backend-not-implemented\n")
+                    conn.sendall(b"ERR no-tracks\n")
 
     def __exit__(self, *_args):
         self.stop_event.set()
@@ -71,6 +77,15 @@ class MusicWebTest(unittest.TestCase):
         with self.assertRaises(BridgeError):
             validate_target("8.8.8.8", "9023")
 
+    def test_serves_desktop_player_page(self):
+        with urlopen(self.base + "/desktop") as response:
+            page = response.read().decode("utf-8")
+        self.assertEqual(response.status, 200)
+        self.assertIn('id="audio"', page)
+        self.assertIn("webkitdirectory", page)
+        self.assertIn("audio.play()", page)
+        self.assertIn("Files stay in your browser", page)
+
     def test_serves_english_ui_and_bridges_playlist(self):
         with FakePayload() as payload:
             with urlopen(self.base + "/") as response:
@@ -78,14 +93,45 @@ class MusicWebTest(unittest.TestCase):
                 self.assertEqual(response.status, 200)
                 self.assertIn('<html lang="en">', page)
                 self.assertIn("Connect &amp; scan", page)
+                self.assertIn('/ps5-controls.js', page)
+            with urlopen(self.base + "/ps5-controls.js") as response:
+                script = response.read().decode("utf-8")
+                self.assertEqual(response.status, 200)
+                self.assertIn("BGM output", script)
             query = urlencode({"host": "127.0.0.1", "port": payload.port})
             with urlopen(self.base + "/api/playlist?" + query) as response:
                 data = json.loads(response.read())
             self.assertEqual(data["count"], 1)
-            self.assertEqual(data["tracks"][0]["title"], "Sample.FLAC")
-            self.assertEqual(data["tracks"][0]["path"], "/mnt/usb0/Music/Sample.FLAC")
+            self.assertEqual(data["tracks"][0]["title"], "Sample.MP3")
+            self.assertEqual(data["tracks"][0]["path"], "/mnt/usb0/Music/Sample.MP3")
 
-    def test_rejects_public_target_and_reports_unimplemented_audio(self):
+    def test_reads_playback_status(self):
+        with FakePayload() as payload:
+            query = urlencode({"host": "127.0.0.1", "port": payload.port})
+            with urlopen(self.base + "/api/status?" + query) as response:
+                data = json.loads(response.read())
+        self.assertTrue(data["available"])
+        self.assertEqual(data["state"], "STOPPED")
+        self.assertEqual(data["volume"], 80)
+
+    def test_bridges_play_and_volume_commands(self):
+        with FakePayload() as payload:
+            for payload_json, expected in [
+                ({"host": "127.0.0.1", "port": payload.port, "command": "play", "track": 1}, "QUEUED"),
+                ({"host": "127.0.0.1", "port": payload.port, "command": "volume", "volume": 70}, "VOLUME_SET"),
+            ]:
+                request = Request(self.base + "/api/control", data=json.dumps(payload_json).encode(),
+                                  headers={"Content-Type": "application/json"}, method="POST")
+                with urlopen(request) as response:
+                    self.assertEqual(json.loads(response.read())["response"], expected)
+            bad = {"host": "127.0.0.1", "port": payload.port, "command": "play", "track": 0}
+            request = Request(self.base + "/api/control", data=json.dumps(bad).encode(),
+                              headers={"Content-Type": "application/json"}, method="POST")
+            with self.assertRaises(HTTPError) as caught:
+                urlopen(request)
+            self.assertEqual(caught.exception.code, 409)
+
+    def test_rejects_public_target_and_reports_control_errors(self):
         query = urlencode({"host": "8.8.8.8", "port": 9023})
         with self.assertRaises(HTTPError) as caught:
             urlopen(self.base + "/api/playlist?" + query)
@@ -99,7 +145,7 @@ class MusicWebTest(unittest.TestCase):
             with self.assertRaises(HTTPError) as control_error:
                 urlopen(request)
             self.assertEqual(control_error.exception.code, 409)
-            self.assertIn("audio-backend-not-implemented", control_error.exception.read().decode())
+            self.assertIn("no-tracks", control_error.exception.read().decode())
 
 
 if __name__ == "__main__":

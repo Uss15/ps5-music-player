@@ -1,26 +1,29 @@
 # PS5 Music Player
 
-An early-stage homebrew music-player project for an exploited PS5. The goal is a browsable USB music library with playback controls that can coexist with a game. This repository is not yet a finished player: audio decoding/output, an on-console UI, and game-background behavior still require implementation and real-console testing.
+An early test build with two ways to listen: a local computer player and a PS5 homebrew payload. The computer player plays files through the browser's audio engine. The ELF version scans PS5 storage and sends MP3/WAV PCM through the PS5 BGM AudioOut port; it still requires testing on a physical console before game-audio mixing can be claimed.
 
-## Implemented in this branch
+## Computer version
 
-- Recursive library scan for `.mp3`, `.wav`, `.ogg`, and `.flac` files.
-- Scans `/data/music`, `/mnt/usb0`, and `/mnt/usb1`; USB mount paths can vary by firmware and loader, so verify them on the target console.
-- Case-insensitive sorted playlist output, bounded path and track counts, and symbolic-link skipping.
-- TCP playlist service on port `9023` and a host CLI that reads the complete multi-line response.
-- Responsive English browser UI with PS5 connection fields, search, source labels, and a playlist view.
-- Reserved control commands (`STATUS`, `NEXT`, `PREV`, `PAUSE`, `RESUME`, `STOP`) currently return `audio-backend-not-implemented`. They do not play or control audio yet.
-- The browser UI is hosted by the computer/phone running the Python server. It is not rendered on the PS5 TV screen; a native console UI is still a separate task.
+Requirements: Python 3.10+ and a current desktop browser. No Python packages are required.
 
-## Requirements
+On Windows, double-click `run_desktop.bat`. On Linux or macOS, run `./run_desktop.sh` (or `make run-desktop`). The app opens a local page at `http://127.0.0.1:8765/desktop`. Choose a folder containing music; the browser reads the selected files locally and does not upload them. Use the playlist to play, pause, skip, seek, and change volume. Playback format support depends on the installed browser; MP3 and WAV are broadly supported, while OGG/FLAC support varies.
 
-- [ps5-payload-dev/sdk](https://github.com/ps5-payload-dev/sdk)
-- An ELF loader compatible with the console's homebrew environment
-- Python 3.10+ for the host controller and web UI
+To use the separate PS5 library/control page, run `make run-web` and open `http://127.0.0.1:8765`. The bridge defaults to loopback. It has no login; do not bind it to a public or untrusted network.
 
-Firmware support depends on the SDK, loader, and libraries available in the target environment. This project has not been tested on a physical PS5 in this branch.
+## PS5 ELF version
 
-## Build
+### Current capability
+
+- Recursively scans `/data/music`, `/mnt/usb0`, and `/mnt/usb1` for MP3 and WAV files, sorting paths and skipping symbolic links.
+- Serves the playlist and controls over TCP port `9023`.
+- Decodes MP3 with the bundled CC0 minimp3 decoder and PCM WAV (8/16-bit mono/stereo).
+- Resamples to 48 kHz stereo, then calls `sceAudioOut` on the PS5 BGM port. Pause, resume, stop, next, previous, status, and volume commands are implemented.
+- Audio output, BGM routing, USB mount paths, and especially mixing with a running game are **not verified on real PS5 hardware**. The BGM route is selected in code; whether a given firmware/loader accepts it and mixes as desired must be tested on the target console.
+- This is a payload plus a companion browser UI; it does not create a native PS5 TV-screen application or Control Center integration.
+
+### Build
+
+Install the [PS5 Payload SDK](https://github.com/ps5-payload-dev/sdk), a compatible ELF loader, and LLVM 18. Then:
 
 ```sh
 export PS5_PAYLOAD_SDK=/opt/ps5-payload-sdk
@@ -28,37 +31,31 @@ export LLVM_CONFIG=/usr/bin/llvm-config-18
 make
 ```
 
-The result is `ps5-music-player.elf`. Start it with a compatible ELF loader. The payload listens on TCP port `9023`.
+Output: `ps5-music-player.elf`. Start it with a compatible ELF loader. The network service listens on port `9023` and reports whether `AudioOutOpen` succeeded. SDK and firmware compatibility varies; a successful compile does not prove playback on the console.
+
+To build the ELF and a standalone computer ZIP for a GitHub release, run `make release-assets`. The files are written under `dist/`.
+
+### Controller examples
 
 ```sh
 python3 host/music_ctl.py --host 192.168.1.50 playlist
 python3 host/music_ctl.py --host 192.168.1.50 status
+python3 host/music_ctl.py --host 192.168.1.50 play --track 1
+python3 host/music_ctl.py --host 192.168.1.50 pause
+python3 host/music_ctl.py --host 192.168.1.50 resume
+python3 host/music_ctl.py --host 192.168.1.50 next
+python3 host/music_ctl.py --host 192.168.1.50 volume --volume 70
+python3 host/music_ctl.py --host 192.168.1.50 stop
 ```
 
-Run the English web interface on the same computer as the browser:
+### Host tests
 
-```sh
-make run-web
-```
+Run `make test-host` on Linux without a PS5 SDK. It exercises recursive scanning, the TCP protocol, the HTTP bridge, and the audio decode/output control path using a generated WAV fixture and a fake AudioOut sink. It does not test the PS5 audio hardware.
 
-Open `http://127.0.0.1:8765`, enter the PS5's local IP address, and choose **Connect & scan**. To open the page from a phone on the same trusted home network, run `python3 host/music_web.py --listen 0.0.0.0` and browse to `http://<computer-ip>:8765`. The web bridge has no login yet; do not expose it to the public internet or an untrusted network.
+## Release status
 
-The interface currently scans and displays the playlist. Play/pause/skip and volume controls are visibly disabled until the PS5 audio backend exists. This browser page runs on a computer or phone, not on the PS5 TV screen.
+Build artifacts are prepared only after the host tests pass and the ELF compiles. This is an experimental/pre-release build until it has been exercised on a physical PS5. Do not assume that game audio remains unaffected until tested on your own firmware/loader combination.
 
-Run the host-side integration test on Linux without the PS5 SDK:
+## Licenses
 
-```sh
-make test-host
-```
-
-## Target-device checks still needed
-
-1. Confirm the PS5 firmware, loader, and SDK combination can build and load the ELF.
-2. Confirm the mounted USB paths and whether supported audio files can be read from them.
-3. Identify and test an audio output API and decoder on that target combination.
-4. Implement pause/resume/skip and test output mixing while a game is running. The project does not currently guarantee that homebrew audio can be mixed with game audio or controlled through the PS5 Control Center.
-5. Add a native on-console library/player UI if the target homebrew environment supports it.
-
-## License
-
-GPL-3.0-or-later. Any decoder added later must retain its own license and attribution.
+Project code: GPL-3.0-or-later. The bundled `third_party/minimp3` decoder is CC0 1.0; its license is included alongside the source.
